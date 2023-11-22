@@ -3,8 +3,8 @@ services:
   frontend:
     build: ./client
     ports:
-      - 3001:3000
-    container_name: project-tag_frontend
+      - 3000:3000
+    container_name: datagrid_frontend
     env_file:
       - ./client/.env
     depends_on:
@@ -13,8 +13,8 @@ services:
   backend:
     build: ./server
     ports:
-      - 5001:5000
-    container_name: project-tag_backend
+      - 1337:1337
+    container_name: datagrid_backend
     env_file:
       - ./server/.env
     depends_on:
@@ -22,13 +22,13 @@ services:
 
   database:
     image: postgres
-    container_name: project-tag_database
+    container_name: datagrid_database
     ports:
       - 5433:5432
     volumes:
       - db_data:/var/lib/postgresql/data
     env_file:
-      - ./server/.env
+      - ./database/.env
 
 volumes:
   db_data:
