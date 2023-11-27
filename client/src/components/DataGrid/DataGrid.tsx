@@ -1,34 +1,71 @@
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
+import { Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { DataGridProps } from './interface';
+import { useMemo } from 'react';
 import { HeaderRow, Row } from './components';
+import { DataGridProps } from './interface';
 
-export const DataGrid = <R,>({ data, columns }: DataGridProps<R>) => {
+export const DataGrid = <R,>({ data, columns, loading, setCollapsible }: DataGridProps<R>) => {
   const table = useReactTable({
     columns,
-    data,
+    data: data ?? [],
     getCoreRowModel: getCoreRowModel(),
   });
 
   const { rows } = table.getRowModel();
 
+  const { head, body } = useMemo(() => {
+    if (loading) {
+      return {
+        head: (
+          <TableHead>
+            <TableRow>
+              {[1, 2, 3, 4, 5].map((header) => (
+                <TableCell key={header}>
+                  <Skeleton variant="rounded" width={210} height={30} />
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+        ),
+        body: (
+          <TableBody>
+            {[1, 2, 3, 4, 5].map((item) => (
+              <TableRow key={item}>
+                {[1, 2, 3, 4, 5].map((item) => (
+                  <TableCell key={item}>
+                    <Skeleton variant="rounded" width={210} height={30} />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        ),
+      };
+    }
+
+    return {
+      head: (
+        <TableHead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <HeaderRow headerGroup={headerGroup} key={headerGroup.id} setCollapsible={setCollapsible} />
+          ))}
+        </TableHead>
+      ),
+      body: (
+        <TableBody>
+          {rows.map((row) => (
+            <Row row={row} key={row.id} setCollapsible={setCollapsible} />
+          ))}
+        </TableBody>
+      ),
+    };
+  }, [loading, rows, table, setCollapsible]);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: table.getTotalSize() }}>
-        <TableHead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <HeaderRow headerGroup={headerGroup} key={headerGroup.id} />
-          ))}
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <Row row={row} />
-          ))}
-        </TableBody>
+        {head}
+        {body}
       </Table>
     </TableContainer>
   );

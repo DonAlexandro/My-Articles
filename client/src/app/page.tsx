@@ -1,45 +1,58 @@
-import React, { useMemo } from 'react';
-import { DataGrid } from '../components';
 import { ColumnDef } from '@tanstack/react-table';
-
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const data = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+import React, { Fragment, useMemo } from 'react';
+import { NumericFormat } from 'react-number-format';
+import { DataGrid } from '../components';
+import { gameAPI } from '../redux/api';
+import { Game } from '../shared/types';
+import { Box, Chip, Stack, Typography } from '@mui/material';
 
 export const Home: React.FC = () => {
-  const columns: ColumnDef<ReturnType<typeof createData>>[] = useMemo(
+  const { data: games, isLoading } = gameAPI.useFindAllQuery();
+
+  const columns: ColumnDef<Game>[] = useMemo(
     () => [
       {
-        accessorKey: 'name',
-        header: 'Dessert (100g serving)',
+        accessorKey: 'attributes.title',
+        header: 'Title',
+        size: 100,
+        meta: {
+          withChevron: true,
+        },
       },
       {
-        accessorKey: 'calories',
-        header: 'Calories',
+        accessorKey: 'attributes.short_description',
+        header: 'Short Description',
+        size: 300,
       },
       {
-        accessorKey: 'fat',
-        header: 'Fat (g)',
-      },
-      {
-        accessorKey: 'carbs',
-        header: 'Carbs (g)',
-      },
-      {
-        accessorKey: 'protein',
-        header: 'Protein (g)',
+        accessorKey: 'attributes.price',
+        header: 'Price',
+        size: 50,
+        meta: {
+          hideTooltip: true,
+        },
+        cell: ({ row: { original } }) => (
+          <NumericFormat value={original.attributes.price} thousandSeparator="," suffix=" UAH" displayType="text" />
+        ),
       },
     ],
     [],
   );
 
-  return <DataGrid columns={columns} data={data} />;
+  const setCollapsible = ({ original }: { original: Game }) => (
+    <Fragment>
+      <Typography variant="subtitle2">Genres</Typography>
+      <Stack direction="row" gap={1}>
+        {original.attributes.genres.data.map((genre) => (
+          <Chip size="small" key={genre.id} label={genre.attributes.title} variant="outlined" />
+        ))}
+      </Stack>
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="subtitle2">Description</Typography>
+        <Typography variant="body2">{original.attributes.description}</Typography>
+      </Box>
+    </Fragment>
+  );
+
+  return <DataGrid columns={columns} data={games?.data} loading={isLoading} setCollapsible={setCollapsible} />;
 };

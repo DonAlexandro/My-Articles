@@ -1,13 +1,15 @@
-import { TableCell, TableRow } from '@mui/material';
-import { HeaderGroup, flexRender } from '@tanstack/react-table';
+import { TableCell, TableRow, Typography } from '@mui/material';
+import { HeaderGroup, Row, flexRender } from '@tanstack/react-table';
 
 type HeaderRowProps<R> = {
   headerGroup: HeaderGroup<R>;
+  setCollapsible?: (row: Row<R>) => JSX.Element;
 };
 
-export const HeaderRow = <R,>({ headerGroup }: HeaderRowProps<R>) => {
+export const HeaderRow = <R,>({ headerGroup, setCollapsible }: HeaderRowProps<R>) => {
   return (
     <TableRow>
+      {setCollapsible && <TableCell sx={{ width: 10 }} />}
       {headerGroup.headers.map((header) => (
         <TableCell
           component="th"
@@ -18,7 +20,9 @@ export const HeaderRow = <R,>({ headerGroup }: HeaderRowProps<R>) => {
           }}
           key={header.id}
         >
-          {flexRender(header.column.columnDef.header, header.getContext())}
+          <Typography component="div" variant="subtitle2">
+            {flexRender(header.column.columnDef.header, header.getContext())}
+          </Typography>
         </TableCell>
       ))}
     </TableRow>
