@@ -1,5 +1,6 @@
 import { TableCell, TableRow, Typography } from '@mui/material';
 import { HeaderGroup, Row, flexRender } from '@tanstack/react-table';
+import Styled from '../datagrid.styled';
 
 type HeaderRowProps<R> = {
   headerGroup: HeaderGroup<R>;
@@ -20,9 +21,12 @@ export const HeaderRow = <R,>({ headerGroup, setCollapsible }: HeaderRowProps<R>
           }}
           key={header.id}
         >
-          <Typography component="div" variant="subtitle2">
-            {flexRender(header.column.columnDef.header, header.getContext())}
-          </Typography>
+          <Typography variant="subtitle2">{flexRender(header.column.columnDef.header, header.getContext())}</Typography>
+          <Styled.Resizer
+            onMouseDown={header.getResizeHandler()}
+            onTouchStart={header.getResizeHandler()}
+            $isResizing={header.column.getIsResizing()}
+          />
         </TableCell>
       ))}
     </TableRow>
