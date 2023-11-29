@@ -1,9 +1,9 @@
 import { Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { HeaderRow, Row } from './components';
+import { HeaderRow, Pagination, Row } from './components';
 import { DataGridProps } from './interface';
 
-export const DataGrid = <R,>({ data, columns, loading, setCollapsible }: DataGridProps<R>) => {
+export const DataGrid = <R,>({ data, columns, loading, setCollapsible, pagination }: DataGridProps<R>) => {
   const table = useReactTable({
     columns,
     data: data ?? [],
@@ -49,6 +49,7 @@ export const DataGrid = <R,>({ data, columns, loading, setCollapsible }: DataGri
             : rows.map((row) => <Row row={row} key={row.id} setCollapsible={setCollapsible} />)}
         </TableBody>
       </Table>
+      <Pagination pagination={pagination} />
     </TableContainer>
   );
 };

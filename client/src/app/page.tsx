@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import React, { Fragment, useMemo } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { DataGrid } from '../components';
 import { gameAPI } from '../redux/api';
@@ -7,7 +7,12 @@ import { Game } from '../shared/types';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 
 export const Home: React.FC = () => {
-  const { data: games, isLoading } = gameAPI.useFindAllQuery();
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [findAll, { data: games, isLoading }] = gameAPI.useLazyFindAllQuery();
+
+  useEffect(() => {
+    findAll({ pagination });
+  }, [findAll, pagination]);
 
   const columns: ColumnDef<Game>[] = useMemo(
     () => [
@@ -54,5 +59,18 @@ export const Home: React.FC = () => {
     </Fragment>
   );
 
-  return <DataGrid columns={columns} data={games?.data} loading={isLoading} setCollapsible={setCollapsible} />;
+  return (
+    <DataGrid
+      columns={columns}
+      data={games?.data}
+      loading={isLoading}
+      setCollapsible={setCollapsible}
+      pagination={{
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+        setState: setPagination,
+        count: games?.meta.pagination.total,
+      }}
+    />
+  );
 };
