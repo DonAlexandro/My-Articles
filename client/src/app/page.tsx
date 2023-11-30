@@ -1,4 +1,4 @@
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, SortingState } from '@tanstack/react-table';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { DataGrid } from '../components';
@@ -8,15 +8,20 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 
 export const Home: React.FC = () => {
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const [findAll, { data: games, isLoading }] = gameAPI.useLazyFindAllQuery();
 
+  const sort = useMemo(() => sorting.map((sortItem) => `${sortItem.id}:${sortItem.desc ? 'desc' : 'asc'}`), [sorting]);
+
   useEffect(() => {
-    findAll({ pagination });
-  }, [findAll, pagination]);
+    findAll({ pagination, sort });
+  }, [findAll, pagination, sort]);
 
   const columns: ColumnDef<Game>[] = useMemo(
     () => [
       {
+        id: 'title',
         accessorKey: 'attributes.title',
         header: 'Title',
         size: 100,
@@ -25,11 +30,13 @@ export const Home: React.FC = () => {
         },
       },
       {
+        id: 'short_description',
         accessorKey: 'attributes.short_description',
         header: 'Short Description',
         size: 300,
       },
       {
+        id: 'price',
         accessorKey: 'attributes.price',
         header: 'Price',
         size: 50,
@@ -71,6 +78,7 @@ export const Home: React.FC = () => {
         setState: setPagination,
         count: games?.meta.pagination.total,
       }}
+      sorting={{ setState: setSorting, state: sorting }}
     />
   );
 };

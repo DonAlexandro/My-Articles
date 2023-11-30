@@ -1,6 +1,7 @@
-import { Box, BoxProps, styled } from '@mui/material';
+import { Box, BoxProps, TableCell, TableCellProps, styled } from '@mui/material';
+import { shouldForwardProp } from '../../utils';
 
-const Resizer = styled(Box)<BoxProps & { $isResizing: boolean }>(({ $isResizing }) => ({
+const Resizer = styled(Box, { shouldForwardProp })<BoxProps & { $isResizing: boolean }>(({ $isResizing }) => ({
   position: 'absolute',
   right: 0,
   top: 0,
@@ -22,6 +23,22 @@ const Resizer = styled(Box)<BoxProps & { $isResizing: boolean }>(({ $isResizing 
   }),
 }));
 
-const Styled = { Resizer };
+const HeaderCell = styled(TableCell, { shouldForwardProp })<TableCellProps & { $isSorted: string | boolean }>(
+  ({ $isSorted }) => ({
+    position: 'relative',
+
+    '& .MuiIconButton-root': {
+      opacity: $isSorted ? 1 : 0,
+    },
+
+    '&:hover': {
+      '& .MuiIconButton-root': {
+        opacity: $isSorted ? 1 : 0.5,
+      },
+    },
+  }),
+);
+
+const Styled = { Resizer, HeaderCell };
 
 export default Styled;

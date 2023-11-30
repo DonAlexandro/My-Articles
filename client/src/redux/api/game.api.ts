@@ -9,9 +9,9 @@ export const gameAPI = createApi({
   baseQuery,
   tagTypes: ['Games'],
   endpoints: (builder) => ({
-    findAll: builder.query<Response<Game>, { pagination: PaginationDTO }>({
-      query: ({ pagination }) => {
-        const searchParams = stringify({ populate: ['genres'], pagination });
+    findAll: builder.query<Response<Game>, { pagination?: PaginationDTO; sort?: string[] }>({
+      query: ({ pagination, sort }) => {
+        const searchParams = stringify({ populate: ['genres'], pagination, sort });
 
         return {
           url: `/games?${searchParams}`,

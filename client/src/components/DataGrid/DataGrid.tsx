@@ -3,12 +3,17 @@ import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { HeaderRow, Pagination, Row } from './components';
 import { DataGridProps } from './interface';
 
-export const DataGrid = <R,>({ data, columns, loading, setCollapsible, pagination }: DataGridProps<R>) => {
+export const DataGrid = <R,>({ data, columns, loading, setCollapsible, pagination, sorting }: DataGridProps<R>) => {
   const table = useReactTable({
     columns,
     data: data ?? [],
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: 'onChange',
+    manualSorting: true,
+    state: {
+      sorting: sorting?.state,
+    },
+    onSortingChange: sorting?.setState,
   });
 
   const { rows } = table.getRowModel();
