@@ -714,12 +714,13 @@ export interface ApiGenreGenre extends Schema.CollectionType {
     singularName: 'genre';
     pluralName: 'genres';
     displayName: 'Genres';
+    description: '';
   };
   options: {
     draftAndPublish: true;
   };
   attributes: {
-    title: Attribute.String;
+    title: Attribute.String & Attribute.Required;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;

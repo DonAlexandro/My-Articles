@@ -5,6 +5,7 @@ export type DataGridProps<R> = {
   data?: R[];
   loading?: boolean;
   setCollapsible?: (row: Row<R>) => JSX.Element;
+  search?: string;
   pagination?: {
     count?: number;
     page: number;
@@ -24,4 +25,5 @@ export type DataGridProps<R> = {
 
 export type Meta = {
   hideTooltip?: boolean;
+  flexRender?: boolean;
 };

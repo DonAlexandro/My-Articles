@@ -1,18 +1,31 @@
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { Box, Collapse, IconButton, TableCell, TableRow, Tooltip, Typography, useTheme } from '@mui/material';
-import { Row as ReactTableRow, flexRender } from '@tanstack/react-table';
-import { Fragment } from 'react';
+import { Cell, Row as ReactTableRow, flexRender } from '@tanstack/react-table';
+import { Fragment, useCallback } from 'react';
+import Highlighter from 'react-highlight-words';
 import { useBoolean } from 'usehooks-ts';
 import { Meta } from '../interface';
 
 type RowProps<R> = {
   row: ReactTableRow<R>;
   setCollapsible?: (row: ReactTableRow<R>) => JSX.Element;
+  search?: string;
 };
 
-export const Row = <R,>({ row, setCollapsible }: RowProps<R>) => {
+export const Row = <R,>({ row, setCollapsible, search }: RowProps<R>) => {
   const theme = useTheme();
   const { value: expanded, toggle: toggleCollapse } = useBoolean();
+
+  const getSearchedValue = useCallback(
+    (cell: Cell<R, unknown>) => {
+      if (search) {
+        return <Highlighter searchWords={[search]} textToHighlight={cell.getValue() as string} />;
+      }
+
+      return flexRender(cell.column.columnDef.cell, cell.getContext());
+    },
+    [search],
+  );
 
   return (
     <Fragment>
@@ -35,7 +48,9 @@ export const Row = <R,>({ row, setCollapsible }: RowProps<R>) => {
             <TableCell sx={{ maxWidth: cell.column.getSize(), whiteSpace: 'nowrap' }} key={cell.id} component="th">
               <Tooltip title={meta?.hideTooltip ? '' : (cell.getValue() as string)} placement="top-start">
                 <Typography component="div" variant="body2" sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {meta?.flexRender
+                    ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                    : getSearchedValue(cell)}
                 </Typography>
               </Tooltip>
             </TableCell>
