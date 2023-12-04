@@ -4,4 +4,4 @@ export type FiltersType = {
   data: { id: number; label: string; value: string }[];
 };
 
-export type FiltersStateType = { [key: string]: string[] };
+export type FiltersStateType = { [key: string]: string[] | number[] };

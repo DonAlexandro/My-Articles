@@ -27,6 +27,7 @@ export const gameAPI = createApi({
           url: `/games?${searchParams}`,
         };
       },
+      providesTags: ['Games'],
     }),
   }),
 });

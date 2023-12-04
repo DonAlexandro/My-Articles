@@ -7,8 +7,12 @@ import { DataGrid } from '../../components';
 import { gameAPI } from '../../redux/api';
 import { useAppSelector } from '../../redux/store';
 import { Game } from '../../shared/types';
-import { mapArraysToInFilter, mapStringToSearchFilter } from '../../utils';
+import { mapArraysToInFilter, mapStringToSearchFilter, mapArraysToRangeFilters } from '../../utils';
 import { GameFilters } from './components';
+import { GameSliceInitialState } from '../../redux/slices';
+
+type FilterStateStringArraysType = Pick<GameSliceInitialState['filterState'], 'genres'>;
+type FilterStateNumberArraysType = Pick<GameSliceInitialState['filterState'], 'price'>;
 
 export const Home: React.FC = () => {
   const { search, filterState } = useAppSelector((state) => state.gameSlice);
@@ -25,7 +29,8 @@ export const Home: React.FC = () => {
   const filters = useMemo(
     () => ({
       ...mapStringToSearchFilter(search, ['title', 'short_description']),
-      ...mapArraysToInFilter(pick(filterState, ['genres']), { genres: 'title' }),
+      ...mapArraysToInFilter(pick(filterState, ['genres']) as FilterStateStringArraysType, { genres: 'title' }),
+      ...mapArraysToRangeFilters(pick(filterState, ['price']) as FilterStateNumberArraysType),
     }),
     [search, filterState],
   );

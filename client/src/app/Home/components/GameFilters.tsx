@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
 import { Filters } from '../../../components';
-import { mapGenresToFilters } from '../presenter';
 import { genreAPI } from '../../../redux/api';
-import { useAppDispatch, useAppSelector } from '../../../redux/store';
 import { setFilterState, setSearch } from '../../../redux/slices';
+import { useAppDispatch, useAppSelector } from '../../../redux/store';
+import { mapGenresToFilters } from '../presenter';
+import { PriceRange } from './PriceRange';
 
 export const GameFilters: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +23,12 @@ export const GameFilters: React.FC = () => {
   };
 
   return (
-    <Filters setSearch={handleSearch} filterState={filterState} setFilterState={handleFilterState} filters={filters} />
+    <Filters
+      setSearch={handleSearch}
+      filterState={filterState}
+      setFilterState={handleFilterState}
+      filters={filters}
+      extra={[<PriceRange />]}
+    />
   );
 };
