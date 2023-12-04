@@ -1,4 +1,5 @@
 import { Record } from './common';
+import { Genre } from './genre';
 
 export type Game = Record<{
   title: string;
@@ -9,11 +10,6 @@ export type Game = Record<{
   short_description: string;
   updatedAt: string;
   genres: {
-    data: Record<{
-      title: string;
-      createdAt: string;
-      publishedAt: string;
-      updatedAt: string;
-    }>[];
+    data: Genre[];
   };
 }>;

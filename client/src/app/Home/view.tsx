@@ -1,24 +1,38 @@
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { ColumnDef, SortingState } from '@tanstack/react-table';
+import pick from 'lodash.pick';
 import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
-import { DataGrid } from '../components';
-import { Filters } from '../components/Filters';
-import { gameAPI } from '../redux/api';
-import { Game } from '../shared/types';
+import { DataGrid } from '../../components';
+import { gameAPI } from '../../redux/api';
+import { useAppSelector } from '../../redux/store';
+import { Game } from '../../shared/types';
+import { mapArraysToInFilter, mapStringToSearchFilter } from '../../utils';
+import { GameFilters } from './components';
 
 export const Home: React.FC = () => {
+  const { search, filterState } = useAppSelector((state) => state.gameSlice);
+
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [search, setSearch] = useState('');
 
-  const [findAll, { data: games, isLoading }] = gameAPI.useLazyFindAllQuery();
+  const [findAll, { data: games, isLoading: gamesLoading }] = gameAPI.useLazyFindAllQuery();
+
+  const loading = useMemo(() => gamesLoading, [gamesLoading]);
 
   const sort = useMemo(() => sorting.map((sortItem) => `${sortItem.id}:${sortItem.desc ? 'desc' : 'asc'}`), [sorting]);
 
+  const filters = useMemo(
+    () => ({
+      ...mapStringToSearchFilter(search, ['title', 'short_description']),
+      ...mapArraysToInFilter(pick(filterState, ['genres']), { genres: 'title' }),
+    }),
+    [search, filterState],
+  );
+
   useEffect(() => {
-    findAll({ pagination, sort, search });
-  }, [findAll, pagination, sort, search]);
+    findAll({ pagination, sort, filters });
+  }, [findAll, pagination, sort, filters]);
 
   const columns: ColumnDef<Game>[] = useMemo(
     () => [
@@ -27,9 +41,6 @@ export const Home: React.FC = () => {
         accessorKey: 'attributes.title',
         header: 'Title',
         size: 100,
-        meta: {
-          withChevron: true,
-        },
       },
       {
         id: 'short_description',
@@ -72,12 +83,12 @@ export const Home: React.FC = () => {
   return (
     <Fragment>
       <Box sx={{ mb: 2 }}>
-        <Filters setSearch={setSearch} />
+        <GameFilters />
       </Box>
       <DataGrid
         columns={columns}
         data={games?.data}
-        loading={isLoading}
+        loading={loading}
         setCollapsible={setCollapsible}
         search={search}
         pagination={{

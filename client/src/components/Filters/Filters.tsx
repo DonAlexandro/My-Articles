@@ -1,17 +1,22 @@
-import { Box, TextField } from '@mui/material';
-import debounce from 'lodash.debounce';
+import { Stack } from '@mui/material';
 import { FC } from 'react';
+import { FiltersStateType, FiltersType } from '.';
+import { FiltersSelect, SearchField } from './components';
 
 type FiltersProps = {
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  setSearch: (search: string) => void;
+  filterState: FiltersStateType;
+  setFilterState: (key: string, value: string[]) => void;
+  filters: FiltersType[];
 };
 
-export const Filters: FC<FiltersProps> = ({ setSearch }) => {
-  const handleSearch = debounce(setSearch, 500);
-
+export const Filters: FC<FiltersProps> = ({ setSearch, filterState, filters, setFilterState }) => {
   return (
-    <Box>
-      <TextField label="Search" size="small" onChange={(event) => handleSearch(event.target.value)} />
-    </Box>
+    <Stack direction="row" gap={2}>
+      <SearchField setSearch={setSearch} />
+      {filters.map((filter) => (
+        <FiltersSelect key={filter.key} filter={filter} setFilterState={setFilterState} filterState={filterState} />
+      ))}
+    </Stack>
   );
 };
