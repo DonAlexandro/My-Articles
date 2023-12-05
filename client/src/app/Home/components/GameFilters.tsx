@@ -28,7 +28,7 @@ export const GameFilters: React.FC = () => {
       filterState={filterState}
       setFilterState={handleFilterState}
       filters={filters}
-      extra={[<PriceRange />]}
+      extra={[<PriceRange key="price" />]}
     />
   );
 };

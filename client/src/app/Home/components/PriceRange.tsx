@@ -1,6 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import debounce from 'lodash.debounce';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { setFilterState } from '../../../redux/slices';
 import { useAppDispatch, useAppSelector } from '../../../redux/store';
 
@@ -33,8 +33,6 @@ export const PriceRange = () => {
     ],
     [price],
   );
-
-  useEffect(() => console.log(price), [price]);
 
   return (
     <Stack key="price" direction="row" gap={1}>

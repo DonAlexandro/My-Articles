@@ -1,6 +1,7 @@
 import { ColumnDef, Row, SortingState } from '@tanstack/react-table';
 
 export type DataGridProps<R> = {
+  id: string;
   columns: ColumnDef<R>[];
   data?: R[];
   loading?: boolean;

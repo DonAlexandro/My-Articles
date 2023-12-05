@@ -1,9 +1,12 @@
-import { Card, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Box, Card, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { HeaderRow, Pagination, Row } from './components';
+import { useEffect, useState } from 'react';
+import { ColumnsManagement, HeaderRow, Pagination, Row } from './components';
 import { DataGridProps } from './interface';
+import { columnsAdapter } from '../../storage';
 
 export const DataGrid = <R,>({
+  id,
   data,
   columns,
   loading,
@@ -12,6 +15,8 @@ export const DataGrid = <R,>({
   sorting,
   search,
 }: DataGridProps<R>) => {
+  const [columnVisibility, setColumnVisibility] = useState({});
+
   const table = useReactTable({
     columns,
     data: data ?? [],
@@ -20,16 +25,35 @@ export const DataGrid = <R,>({
     manualSorting: true,
     state: {
       sorting: sorting?.state,
+      columnVisibility,
     },
     onSortingChange: sorting?.setState,
+    onColumnVisibilityChange: setColumnVisibility,
   });
 
   const { rows } = table.getRowModel();
 
   const mockRows = [1, 2, 3, 4, 5];
 
+  useEffect(() => {
+    columnsAdapter.setColumnVisibility(id, columnVisibility);
+  }, [columnVisibility, id]);
+
+  useEffect(() => {
+    const fetchColumnVisibility = async () => {
+      const columnVisibility = await columnsAdapter.getColumnVisibility();
+
+      setColumnVisibility(columnVisibility[id]);
+    };
+
+    fetchColumnVisibility();
+  }, [id]);
+
   return (
     <TableContainer component={Card}>
+      <Box sx={{ p: 1 }}>
+        <ColumnsManagement table={table} />
+      </Box>
       <Table sx={{ minWidth: table.getTotalSize() }}>
         <TableHead>
           {loading ? (

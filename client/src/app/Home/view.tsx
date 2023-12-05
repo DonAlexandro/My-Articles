@@ -91,6 +91,7 @@ export const Home: React.FC = () => {
         <GameFilters />
       </Box>
       <DataGrid
+        id="games"
         columns={columns}
         data={games?.data}
         loading={loading}
