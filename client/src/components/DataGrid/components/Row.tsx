@@ -10,9 +10,10 @@ type RowProps<R> = {
   row: ReactTableRow<R>;
   setCollapsible?: (row: ReactTableRow<R>) => JSX.Element;
   search?: string;
+  size: 'small' | 'medium';
 };
 
-export const Row = <R,>({ row, setCollapsible, search }: RowProps<R>) => {
+export const Row = <R,>({ row, setCollapsible, search, size }: RowProps<R>) => {
   const theme = useTheme();
   const { value: expanded, toggle: toggleCollapse } = useBoolean();
 
@@ -37,7 +38,7 @@ export const Row = <R,>({ row, setCollapsible, search }: RowProps<R>) => {
         onClick={toggleCollapse}
       >
         {setCollapsible && (
-          <TableCell sx={{ p: '11px', width: 5 }}>
+          <TableCell sx={{ ...(size === 'medium' && { p: '11px' }), width: 5 }}>
             <IconButton size="small">{expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}</IconButton>
           </TableCell>
         )}

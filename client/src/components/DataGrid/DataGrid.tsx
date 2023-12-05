@@ -1,9 +1,9 @@
-import { Box, Card, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Card, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { ColumnsManagement, HeaderRow, Pagination, Row } from './components';
-import { DataGridProps } from './interface';
 import { columnsAdapter } from '../../storage';
+import { ColumnsManagement, DensitySelect, HeaderRow, Pagination, Row } from './components';
+import { DataGridProps } from './interface';
 
 export const DataGrid = <R,>({
   id,
@@ -16,6 +16,7 @@ export const DataGrid = <R,>({
   search,
 }: DataGridProps<R>) => {
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [size, setSize] = useState<'small' | 'medium'>('medium');
 
   const table = useReactTable({
     columns,
@@ -51,10 +52,11 @@ export const DataGrid = <R,>({
 
   return (
     <TableContainer component={Card}>
-      <Box sx={{ p: 1 }}>
+      <Stack sx={{ p: 1 }} gap={1} direction="row">
         <ColumnsManagement table={table} />
-      </Box>
-      <Table sx={{ minWidth: table.getTotalSize() }}>
+        <DensitySelect setSize={setSize} size={size} />
+      </Stack>
+      <Table sx={{ minWidth: table.getTotalSize() }} size={size}>
         <TableHead>
           {loading ? (
             <TableRow>
@@ -83,7 +85,9 @@ export const DataGrid = <R,>({
                   ))}
                 </TableRow>
               ))
-            : rows.map((row) => <Row row={row} key={row.id} setCollapsible={setCollapsible} search={search} />)}
+            : rows.map((row) => (
+                <Row row={row} key={row.id} setCollapsible={setCollapsible} search={search} size={size} />
+              ))}
         </TableBody>
       </Table>
       <Pagination pagination={pagination} />

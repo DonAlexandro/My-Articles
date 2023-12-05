@@ -1,24 +1,15 @@
 import { ViewColumn } from '@mui/icons-material';
 import { Box, Button, Menu, MenuItem, Switch } from '@mui/material';
 import { Table } from '@tanstack/react-table';
-import React, { useState } from 'react';
+import React from 'react';
+import { useMenu } from '../../../hooks';
 
 type ColumnsManagementProps<R> = {
   table: Table<R>;
 };
 
 export const ColumnsManagement = <R,>({ table }: ColumnsManagementProps<R>) => {
-  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-
-  const isMenuOpened = Boolean(menuAnchor);
-
-  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setMenuAnchor(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setMenuAnchor(null);
-  };
+  const { menuAnchor, isMenuOpened, handleClose, handleOpen } = useMenu();
 
   return (
     <React.Fragment>
