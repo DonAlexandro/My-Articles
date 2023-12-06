@@ -2,7 +2,7 @@ import { Card, Skeleton, Stack, Table, TableBody, TableCell, TableContainer, Tab
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 import { columnsAdapter } from '../../storage';
-import { ColumnsManagement, DensitySelect, HeaderRow, Pagination, Row } from './components';
+import { ColumnsManagement, DensitySelect, Export, HeaderRow, Pagination, Row } from './components';
 import { DataGridProps } from './interface';
 
 export const DataGrid = <R,>({
@@ -55,6 +55,7 @@ export const DataGrid = <R,>({
       <Stack sx={{ p: 1 }} gap={1} direction="row">
         <ColumnsManagement table={table} />
         <DensitySelect setSize={setSize} size={size} />
+        <Export entity={id} />
       </Stack>
       <Table sx={{ minWidth: table.getTotalSize() }} size={size}>
         <TableHead>
