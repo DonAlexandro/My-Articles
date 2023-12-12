@@ -19,6 +19,7 @@ export const Home: React.FC = () => {
 
   const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = useState({});
 
   const [findAll, { data: games, isLoading: gamesLoading }] = gameAPI.useLazyFindAllQuery();
 
@@ -35,9 +36,21 @@ export const Home: React.FC = () => {
     [search, filterState],
   );
 
+  const selectedGames = useMemo(() => {
+    const indexes = Object.keys(rowSelection);
+
+    if (!indexes.length) {
+      return [];
+    }
+
+    return games?.data.filter((_game, index) => indexes.includes(String(index)));
+  }, [rowSelection, games]);
+
   useEffect(() => {
     findAll({ pagination, sort, filters });
   }, [findAll, pagination, sort, filters]);
+
+  useEffect(() => console.log(selectedGames), [selectedGames]);
 
   const columns: ColumnDef<Game>[] = useMemo(
     () => [
@@ -104,6 +117,7 @@ export const Home: React.FC = () => {
           count: games?.meta.pagination.total,
         }}
         sorting={{ setState: setSorting, state: sorting }}
+        rowSelection={{ state: rowSelection, setState: setRowSelection }}
       />
     </Fragment>
   );

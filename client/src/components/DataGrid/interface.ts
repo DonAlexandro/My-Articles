@@ -1,4 +1,4 @@
-import { ColumnDef, Row, SortingState } from '@tanstack/react-table';
+import { ColumnDef, Row, RowSelectionState, SortingState } from '@tanstack/react-table';
 
 export type DataGridProps<R> = {
   id: string;
@@ -21,6 +21,10 @@ export type DataGridProps<R> = {
   sorting?: {
     state: SortingState;
     setState: React.Dispatch<React.SetStateAction<SortingState>>;
+  };
+  rowSelection?: {
+    state: RowSelectionState;
+    setState: React.Dispatch<React.SetStateAction<RowSelectionState>>;
   };
 };
 

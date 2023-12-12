@@ -1,17 +1,24 @@
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
-import { IconButton, TableCell, TableRow, Typography } from '@mui/material';
-import { HeaderGroup, Row, flexRender } from '@tanstack/react-table';
+import { Checkbox, IconButton, TableCell, TableRow, Typography } from '@mui/material';
+import { HeaderGroup, Table, flexRender } from '@tanstack/react-table';
 import Styled from '../datagrid.styled';
 
 type HeaderRowProps<R> = {
   headerGroup: HeaderGroup<R>;
-  setCollapsible?: (row: Row<R>) => JSX.Element;
+  table: Table<R>;
+  size: 'small' | 'medium';
 };
 
-export const HeaderRow = <R,>({ headerGroup, setCollapsible }: HeaderRowProps<R>) => {
+export const HeaderRow = <R,>({ headerGroup, table, size }: HeaderRowProps<R>) => {
   return (
     <TableRow>
-      {setCollapsible && <TableCell sx={{ width: 10 }} />}
+      <TableCell sx={{ width: 20, ...(size === 'medium' && { p: '11px' }) }}>
+        <Checkbox
+          checked={table.getIsAllRowsSelected()}
+          indeterminate={table.getIsSomeRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      </TableCell>
       {headerGroup.headers.map((header) => (
         <Styled.HeaderCell
           component="th"

@@ -14,6 +14,7 @@ export const DataGrid = <R,>({
   pagination,
   sorting,
   search,
+  rowSelection,
 }: DataGridProps<R>) => {
   const [columnVisibility, setColumnVisibility] = useState({});
   const [size, setSize] = useState<'small' | 'medium'>('medium');
@@ -27,9 +28,11 @@ export const DataGrid = <R,>({
     state: {
       sorting: sorting?.state,
       columnVisibility,
+      rowSelection: rowSelection?.state,
     },
     onSortingChange: sorting?.setState,
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: rowSelection?.setState,
   });
 
   const { rows } = table.getRowModel();
@@ -71,7 +74,7 @@ export const DataGrid = <R,>({
             table
               .getHeaderGroups()
               .map((headerGroup) => (
-                <HeaderRow headerGroup={headerGroup} key={headerGroup.id} setCollapsible={setCollapsible} />
+                <HeaderRow headerGroup={headerGroup} key={headerGroup.id} table={table} size={size} />
               ))
           )}
         </TableHead>

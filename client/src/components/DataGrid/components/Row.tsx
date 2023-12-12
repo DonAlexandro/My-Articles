@@ -1,5 +1,5 @@
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { Box, Collapse, IconButton, TableCell, TableRow, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Checkbox, Collapse, IconButton, TableCell, TableRow, Tooltip, Typography, useTheme } from '@mui/material';
 import { Cell, Row as ReactTableRow, flexRender } from '@tanstack/react-table';
 import { Fragment, useCallback } from 'react';
 import Highlighter from 'react-highlight-words';
@@ -8,9 +8,9 @@ import { Meta } from '../interface';
 
 type RowProps<R> = {
   row: ReactTableRow<R>;
+  size: 'small' | 'medium';
   setCollapsible?: (row: ReactTableRow<R>) => JSX.Element;
   search?: string;
-  size: 'small' | 'medium';
 };
 
 export const Row = <R,>({ row, setCollapsible, search, size }: RowProps<R>) => {
@@ -28,6 +28,11 @@ export const Row = <R,>({ row, setCollapsible, search, size }: RowProps<R>) => {
     [search],
   );
 
+  const handleSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    toggleCollapse();
+    row.getToggleSelectedHandler()(event);
+  };
+
   return (
     <Fragment>
       <TableRow
@@ -37,11 +42,17 @@ export const Row = <R,>({ row, setCollapsible, search, size }: RowProps<R>) => {
         }}
         onClick={toggleCollapse}
       >
-        {setCollapsible && (
-          <TableCell sx={{ ...(size === 'medium' && { p: '11px' }), width: 5 }}>
+        <TableCell sx={{ ...(size === 'medium' && { p: '11px' }), width: 5 }}>
+          <Checkbox
+            checked={row.getIsSelected()}
+            disabled={!row.getCanSelect()}
+            indeterminate={row.getIsSomeSelected()}
+            onChange={handleSelect}
+          />
+          {setCollapsible && (
             <IconButton size="small">{expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}</IconButton>
-          </TableCell>
-        )}
+          )}
+        </TableCell>
         {row.getVisibleCells().map((cell) => {
           const meta = cell.column.columnDef.meta as Meta;
 
