@@ -28,11 +28,6 @@ export const Row = <R,>({ row, setCollapsible, search, size }: RowProps<R>) => {
     [search],
   );
 
-  const handleSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    toggleCollapse();
-    row.getToggleSelectedHandler()(event);
-  };
-
   return (
     <Fragment>
       <TableRow
@@ -42,15 +37,20 @@ export const Row = <R,>({ row, setCollapsible, search, size }: RowProps<R>) => {
         }}
         onClick={toggleCollapse}
       >
-        <TableCell sx={{ ...(size === 'medium' && { p: '11px' }), width: 5 }}>
+        <TableCell
+          onClick={(event) => event.stopPropagation()}
+          sx={{ ...(size === 'medium' && { p: '11px' }), width: 5 }}
+        >
           <Checkbox
             checked={row.getIsSelected()}
             disabled={!row.getCanSelect()}
             indeterminate={row.getIsSomeSelected()}
-            onChange={handleSelect}
+            onChange={row.getToggleSelectedHandler()}
           />
           {setCollapsible && (
-            <IconButton size="small">{expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}</IconButton>
+            <IconButton size="small" onClick={toggleCollapse}>
+              {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
           )}
         </TableCell>
         {row.getVisibleCells().map((cell) => {
